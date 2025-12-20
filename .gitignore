@@ -14,3 +14,8 @@ session/
 dist/
 build/
 
+# ===== App Settings =====
+appsettings*.json
+*.env
+.env.*
+
