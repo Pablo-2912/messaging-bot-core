@@ -19,3 +19,9 @@ appsettings*.json
 *.env
 .env.*
 
+.venv/
+venv/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db

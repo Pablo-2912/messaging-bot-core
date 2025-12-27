@@ -8,7 +8,8 @@ class SendMessageCommand:
     A mensagem é composta por múltiplas partes (parts),
     que serão enviadas em sequência pelo canal.
     """
-
-    number: str
+    
+    number: str | None
     name: str
     parts: Sequence[str]
+    

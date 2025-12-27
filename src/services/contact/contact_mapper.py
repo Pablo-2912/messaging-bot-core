@@ -1,6 +1,8 @@
 from src.domain.entities.contact import Contact
 from src.repository.contacts_repository import ContactsRepository
 from src.services.helper.format_helper import normalize_mobile_number
+from typing import Sequence
+from src.services.contact.messaging.send_message_command import SendMessageCommand
 
 class ContactMapper:
     """
@@ -13,7 +15,7 @@ class ContactMapper:
 
     DEFAULT_GROUP_ID = "grp_default"
 
-    def __init__(self, contacts_repository: ContactsRepository):
+    def __init__(self, contacts_repository: ContactsRepository | None = None):
         self._contacts_repository = contacts_repository
 
     def map_from_identifier(self, identifier: str) -> Contact:
@@ -37,7 +39,7 @@ class ContactMapper:
             return contact
 
         minimal_contact = self._create_minimal_contact(
-            name=identifier if not normalized_number else identifier
+            name=identifier
         )
 
         return  minimal_contact
@@ -51,6 +53,15 @@ class ContactMapper:
 
         return contacts
 
+    def map_to_send_message_command ( self, contact : Contact, messages : Sequence[str]) -> SendMessageCommand:
+        
+        number = contact.number
+        name = contact.name
+
+        command =  SendMessageCommand ( number=number, name=name, parts=messages )
+        
+        return command
+        
     # -------------------------
     # Internal helpers
     # -------------------------
@@ -71,16 +82,20 @@ class ContactMapper:
         Cria um Contact mínimo apenas para uso em runtime.
         Não deve ser persistido diretamente.
         """
-        contact =  Contact(
+
+        normalized_number = normalize_mobile_number(name)
+
+        contact = Contact(
             id=self._generate_runtime_id(name),
             name=name,
-            number="",
+            number=normalized_number or "",
             group_id=self.DEFAULT_GROUP_ID,
             note=None,
             last_interaction=None,
         )
 
         return contact
+
 
     def _generate_runtime_id(self, name: str) -> str:
         """

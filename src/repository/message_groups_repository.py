@@ -9,7 +9,7 @@ from src.services.config.paths import get_config_root
 class MessageGroupsRepository:
     def __init__(self):
         config_root = get_config_root()
-        self._path = config_root / "whatsapp" / "messages" / "message_groups.json"
+        self._path = config_root / "whatsapp" / "groups" / "groups_message.json"
 
     def get_all(self) -> list[MessageGroup]:
         data = self._load()
@@ -61,7 +61,8 @@ class MessageGroupsRepository:
 
     def _load(self) -> dict:
         if not self._path.exists():
-            return {}
+            raise FileNotFoundError(f"Arquivo de config não encontrado: {self._path}")
 
         with self._path.open("r", encoding="utf-8") as f:
             return json.load(f)
+

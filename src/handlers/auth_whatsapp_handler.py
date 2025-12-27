@@ -9,21 +9,26 @@ from src.domain.errors.playwright_errors import (
 )
 from src.config.settings import Settings
 from src.config.whatsapp_selectors import WhatsAppSelectors
+from src.services.whatsapp.selector import resolve_selector
 
 
 class WhatsAppAuth:
     def __init__(
         self,
         page: Page,
-        settings: Settings,
         selectors: WhatsAppSelectors,
-    ):
+    ) -> None:
         self.page = page
-        self.settings = settings
-        self.selectors = selectors
 
-        self._qr_code = qr_code(selectors)
-        self._chat_list = chat_list(selectors)
+        self._qr_code_selector = resolve_selector(
+            page,
+            qr_code(selectors),
+        )
+
+        self._chat_list_selector = resolve_selector(
+            page,
+            chat_list(selectors),
+        )
 
     def authenticate_whatsapp(self, timeout_seconds: int = 120) -> None:
         """
@@ -51,13 +56,10 @@ class WhatsAppAuth:
         while True:
             try:
                 if (
-                    self.page.query_selector(self._qr_code) is not None
-                    or self.page.query_selector(self._chat_list) is not None
+                    self.page.locator(self._qr_code_selector).count() > 0
+                    or self.page.locator(self._chat_list_selector).count() > 0
                 ):
                     return
-
-            except PlaywrightError as e:
-                raise translate_playwright_error(e)
 
             except PlaywrightError as e:
                 raise translate_playwright_error(e)
@@ -69,14 +71,16 @@ class WhatsAppAuth:
 
             time.sleep(0.5)
 
+
     def _is_login_required(self) -> bool:
         """
         Retorna True se o QR Code ainda estiver visível.
         """
         try:
-            return self.page.query_selector(self._qr_code) is not None
+            return self.page.locator(self._qr_code_selector).count() > 0
         except PlaywrightError as e:
             raise translate_playwright_error(e)
+
 
     def _wait_until_logged(self, timeout_seconds: int) -> None:
         """
@@ -99,6 +103,7 @@ class WhatsAppAuth:
         self._wait_for_whatsapp_initial_state(timeout_seconds)
 
         try:
-            return self.page.query_selector(self._chat_list) is not None
+            return self.page.locator(self._chat_list_selector).count() > 0
         except PlaywrightError as e:
             raise translate_playwright_error(e)
+

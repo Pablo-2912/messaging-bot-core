@@ -1,4 +1,6 @@
 from playwright.sync_api import Page
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
+
 
 def scroll_chat_list(page: Page, chat_list: Page, scroll_down: bool = True, amount: int = 150) -> None:
     """
@@ -32,3 +34,17 @@ def reached_end_of_chat_list(
 
     should_break = empty_loop_count >= max_empty_loops
     return should_break, empty_loop_count
+
+def safe_click(
+    page: Page,
+    element,
+    *,
+    timeout_ms: int = 3000,
+    delay_ms: int = 300,
+) -> bool:
+    try:
+        element.click(timeout=timeout_ms)
+        page.wait_for_timeout(delay_ms)
+        return True
+    except (PlaywrightTimeoutError, PlaywrightError):
+        return False

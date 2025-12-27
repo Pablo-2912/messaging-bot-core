@@ -27,7 +27,6 @@ class BootstrapWhatsAppHandler:
         return WhatsAppAuth(
             page=page,
             selectors=self.selectors,
-            settings=self.settings
         )
     
     def handle(self) -> BrowserManager:
