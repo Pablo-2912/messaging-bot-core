@@ -11,7 +11,9 @@ class WhatsAppSelectors(BaseModel):
     send_button: Optional[List[str]] = Field(default=None, alias="sendButton")
     chat_textbox: Optional[List[str]] = Field(default=None, alias="chatTextbox")
     unread_badge: Optional[List[str]] = Field(default=None, alias="unreadBadge")
-
+    
+    chat_textbox_skip: int = Field(default=0, alias="chatTextboxSkip")
+    
     model_config = {
         "populate_by_name": True
     }

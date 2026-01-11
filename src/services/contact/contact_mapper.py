@@ -3,6 +3,7 @@ from src.repository.contacts_repository import ContactsRepository
 from src.services.helper.format_helper import normalize_mobile_number
 from typing import Sequence
 from src.services.contact.messaging.send_message_command import SendMessageCommand
+from src.domain.entities.message_template import MessageTemplate
 
 class ContactMapper:
     """
@@ -53,12 +54,12 @@ class ContactMapper:
 
         return contacts
 
-    def map_to_send_message_command ( self, contact : Contact, messages : Sequence[str]) -> SendMessageCommand:
+    def map_to_send_message_command ( self, contact : Contact, messages : MessageTemplate) -> SendMessageCommand:
         
         number = contact.number
         name = contact.name
 
-        command =  SendMessageCommand ( number=number, name=name, parts=messages )
+        command =  SendMessageCommand ( number=number, name=name, message_template=messages )
         
         return command
         

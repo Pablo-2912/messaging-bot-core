@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Sequence
-
+from src.domain.entities.message_template import MessageTemplate
 @dataclass(frozen=True)
 class SendMessageCommand:
     """
@@ -9,7 +9,7 @@ class SendMessageCommand:
     que serão enviadas em sequência pelo canal.
     """
     
-    number: str | None
+    number: str | None 
     name: str
-    parts: Sequence[str]
+    message_template : MessageTemplate
     

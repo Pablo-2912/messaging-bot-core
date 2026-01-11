@@ -14,7 +14,7 @@ from src.repository.message_groups_repository import MessageGroupsRepository
 # Services
 from src.services.contact.contact_mapper import ContactMapper
 from src.services.contact.messaging.send_message_command import SendMessageCommand
-
+from src.domain.entities.message_template import MessageTemplate
 #External 
 from typing import Sequence
 
@@ -81,7 +81,7 @@ def build_responses(contacts: list[Contact]) -> list[SendMessageCommand]:
         
         message_group: MessageGroup | None = message_groups_by_id[group.message_group_id]
         
-        response : Sequence[str] = ContactResponsePolicy.decide_response_message( contact=contact, group=group, message_group=message_group)
+        response : MessageTemplate = ContactResponsePolicy.decide_response_message( contact=contact, group=group, message_group=message_group)
         
         #TODO : Chamar metodo que mapeia contato + response em command
         command = _mapper.map_to_send_message_command(contact=contact, messages=response)

@@ -42,6 +42,7 @@ def main():
         
         whatsapp_runtime.start()
 
+
     except WhatsAppAuthTimeoutError:
         print("Login não realizado dentro do tempo limite. Serviço encerrado.")
 

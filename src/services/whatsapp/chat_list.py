@@ -16,6 +16,7 @@ from src.services.playwright.selectors_whatsapp import (
 from src.domain.errors.errors_base import TimeoutError
 from src.services.whatsapp.chat_list_models import ChatListScanResult
 from src.services.whatsapp.selector import resolve_selector
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 def get_unread_chats(
     page: Page,
@@ -112,6 +113,7 @@ def get_unread_chats(
                     has_unread = True
                     break
 
+            # 👇 ISSO TEM QUE SER FORA DO LOOP DE SELECTOR
             if has_unread and contact_name and contact_name not in unread_chats:
                 unread_chats.append(contact_name)
 
@@ -166,6 +168,9 @@ def scroll_chat_list_to_top(
             amount=scroll_step,
         )
 
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+
+
 def collect_loaded_chat_names(
     page: Page,
     selectors: WhatsAppSelectors,
@@ -174,6 +179,11 @@ def collect_loaded_chat_names(
     Retorna os nomes dos chats atualmente carregados no DOM.
     NÃO mantém estado.
     """
+
+    chat_list_selector = resolve_selector(
+        page,
+        chat_list(selectors),
+    )
 
     chat_item_selector = resolve_selector(
         page,
@@ -185,7 +195,9 @@ def collect_loaded_chat_names(
         chat_name(selectors),
     )
 
-    chat_items = page.locator(chat_item_selector)
+    chat_list_component = page.locator(chat_list_selector)
+    chat_items = chat_list_component.locator(chat_item_selector)
+
     total_chats = chat_items.count()
 
     collected: list[str] = []
@@ -193,17 +205,22 @@ def collect_loaded_chat_names(
     for i in range(total_chats):
         chat = chat_items.nth(i)
 
-        name = (
-            chat.locator(chat_name_selector)
-            .first
-            .inner_text()
-            .strip()
-        )
+        try:
+            name_locator = chat.locator(chat_name_selector).first
+
+            name = name_locator.get_attribute("title", timeout=300)
+
+            if not name:
+                name = name_locator.inner_text(timeout=300).strip()
+
+        except PlaywrightTimeoutError:
+            break  # parou de achar nomes válidos = fim da lista carregada
 
         if name:
             collected.append(name)
 
     return collected
+
 
 def scan_chat_list(
     page: Page,
@@ -378,10 +395,6 @@ def try_click_chat_by_name(
         chat_item(selectors),
     )
 
-    chat_name_selector = resolve_selector(
-        page,
-        chat_name(selectors),
-    )
 
     chat_list_selector = resolve_selector(
         page,
@@ -411,6 +424,12 @@ def try_click_chat_by_name(
     total_chats = chat_items.count()
 
     for i in range(total_chats):
+        
+        chat_name_selector = resolve_selector(
+            page,
+            chat_name(selectors),
+        )
+        
         chat = chat_items.nth(i)
         contact_name = (
             chat.locator(chat_name_selector)

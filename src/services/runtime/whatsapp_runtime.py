@@ -35,6 +35,9 @@ class WhatsAppRuntime:
 
         while True:
             try:
+                #TODO : Tirar depois
+                #return ["Pai"]
+                
                 return get_unread_chats(
                     page=self.browser.page,
                     selectors=self.selectors,
@@ -58,20 +61,18 @@ class WhatsAppRuntime:
         
         if not contacts:
             return
+        
         # Cria o command 
         responses = build_responses(contacts=contacts)
         
         deliver_message_to_chats(self.page, responses, selectors=self.selectors)
-
-        pass
-    
 
     def _run_loop(self) -> None: 
            while self.running:
             
             unread_contacts : list[Contact] = []
             
-            # TODO: Pegar mensagens não lidas
+            # Pega as mensagens não lidas
             unread_chats = self._get_unread_chats()
             
             if unread_chats:
@@ -81,5 +82,7 @@ class WhatsAppRuntime:
             self. _send_responses_to_contacts(unread_contacts)
                 
             # TODO: sleep curto
+            
+            
             
     
