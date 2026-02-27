@@ -42,8 +42,14 @@ def deliver_message_to_chats (page : Page, commands : list[SendMessageCommand], 
         
         response : bool = try_click_chat_by_name(page=page, selectors=selectors, target_name=name, stop_at=scan_result.last_chat_name )
         
+        #TODO : Verificar se há algum evento de pause ou stop do worker
+        
         #TODO : Chamar metodo que envia mensagens de acordo com os commands
         _try_send_messages_to_chat(page=page, command=command, selectors=selectors)
+        
+        # TODO : Dispara Log de envio de mensagem
+        # TODO : Atualiza historico
+        
         
         
 def _try_send_messages_to_chat(page : Page, command : SendMessageCommand, selectors : WhatsAppSelectors) -> bool : 

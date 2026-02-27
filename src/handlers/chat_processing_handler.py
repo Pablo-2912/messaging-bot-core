@@ -63,7 +63,6 @@ def build_responses(contacts: list[Contact]) -> list[SendMessageCommand]:
     #TODO : Alterar para chamar os grupos messages sob demanda ( pelos ids em groups )
     message_groups = _message_group.get_all()
     
-
     # 1️⃣ Lookup de groups por id
     groups_by_id: dict[str, Group] = {
         group.id: group for group in groups
