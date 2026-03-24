@@ -45,7 +45,7 @@ class ContactMapper:
 
         return  minimal_contact
         
-    def map_from_identifiers(self, identifiers: list[str]) -> tlist[Contac]:
+    def map_from_identifiers(self, identifiers: list[str]) -> list[Contact]:
         contacts: list[Contact] = []
 
         for identifier in identifiers:

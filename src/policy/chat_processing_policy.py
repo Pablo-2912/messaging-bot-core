@@ -144,6 +144,7 @@ class ContactResponsePolicy:
             message_group: MessageGroup
         ) -> Sequence[str]:
             # TODO : Pegar pelo historico, não apenas pela ultima interação
+            
             if last_interaction is None:
                 return [
                     msg

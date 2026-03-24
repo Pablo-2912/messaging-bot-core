@@ -11,3 +11,4 @@ def get_config_root() -> Path:
         "BOT_CONFIG_PATH não definido. "
         "Configure a variável de ambiente apontando para bot-config/config"
     )
+ 
