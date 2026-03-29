@@ -45,7 +45,7 @@ def write_message_in_chat(page : Page, selectors : WhatsAppSelectors, messages :
     for message in messages: 
         type_text(page, message)
 
-def clickSendButton(page ,selectors : WhatsAppSelectors):
+def click_send_button(page ,selectors : WhatsAppSelectors):
     
     selector = resolve_selector(page,send_button(selectors))
     

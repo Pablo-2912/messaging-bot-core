@@ -13,3 +13,14 @@ class SendMessageCommand:
     name: str
     message_template : MessageTemplate
     
+    def to_dict(self) -> dict:
+        return {
+            "contact": {
+                "name": self.name,
+                "number": self.number,
+            },
+            "message": self.message_template.to_dict(),
+        }
+    
+
+    

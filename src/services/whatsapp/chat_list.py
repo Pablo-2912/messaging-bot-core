@@ -550,10 +550,16 @@ def find_chat_row(
                 return False
             seen_last = True
 
+        # scroll_chat_list(
+        #     page=page,
+        #     chat_list_comp=chat_list_comp,
+        #     amount=scroll_amount,
+        # )
         scroll_chat_list(
-            page=page,
-            chat_list_comp=chat_list_comp,
-            amount=scroll_amount,
+                page,
+                chat_list_comp,
+                amount=scroll_amount,
         )
+        
 
     return False

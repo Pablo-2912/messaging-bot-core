@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 import threading
-from domain.enuns.events.bot_whatsapp_events import WhatsappEvents
+from src.domain.enuns.events.bot_whatsapp_events import WhatsappEvents
 
 class EventWriter:
 
@@ -11,7 +11,12 @@ class EventWriter:
         self.base_path = Path(base_path)
         self.lock = threading.Lock()
 
-    def publish(self, event_type: WhatsappEvents, payload: dict, source: str):
+    def publish(
+        self,
+        event_type: WhatsappEvents,
+        payload: dict | None = None,
+        source: str = "unknown"
+        ):
 
         event = {
             "id": f"evt_{uuid.uuid4().hex[:8]}",
@@ -27,6 +32,7 @@ class EventWriter:
 
         file_path = event_dir / f"{date}.jsonl"
 
+        print(file_path)
         line = json.dumps(event, ensure_ascii=False)
 
         with self.lock:

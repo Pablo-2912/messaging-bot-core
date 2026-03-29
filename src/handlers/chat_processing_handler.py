@@ -73,7 +73,7 @@ def build_responses(contacts: list[Contact]) -> list[SendMessageCommand]:
         msg_group.id: msg_group for msg_group in message_groups
     }
     
-    #TODO : Criar Loop iterando pelos contatos
+    #Cria Loop iterando pelos contatos
     for contact in contacts:
         
         group : Group | None= groups_by_id[contact.group_id]
@@ -82,7 +82,7 @@ def build_responses(contacts: list[Contact]) -> list[SendMessageCommand]:
         
         response : MessageTemplate = ContactResponsePolicy.decide_response_message( contact=contact, group=group, message_group=message_group)
         
-        #TODO : Chamar metodo que mapeia contato + response em command
+        #Chama metodo que mapeia contato + response em command
         command = _mapper.map_to_send_message_command(contact=contact, messages=response)
         
         send_message_commands.append(command)

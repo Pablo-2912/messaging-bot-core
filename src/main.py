@@ -2,6 +2,7 @@ from src.config.config import load_settings
 from src.infra.playwright.browser_manager import BrowserManager
 from src.handlers.bootstrap_whatsapp_handler import BootstrapWhatsAppHandler
 from src.services.config.paths import get_config_root
+from src.services.config.paths import get_event_root
 from src.services.config.whatsapp_selectors_loader import load_whatsapp_selectors
 from src.services.runtime.whatsapp_runtime import WhatsAppRuntime
 
@@ -9,10 +10,12 @@ from src.domain.errors.whatsapp_auth_errors import WhatsAppAuthTimeoutError
 from src.domain.errors.browser_errors import BrowserUnstableError
 from src.domain.errors.playwright_errors import PlaywrightBaseError
 
+from src.infra.events.event_writer import EventWriter
 
 def main():
     try:
         config_root = get_config_root()
+        event_root = get_event_root()
         settings = load_settings(config_root / "appsettings.json")
 
         selectors = load_whatsapp_selectors(
@@ -30,11 +33,13 @@ def main():
         )
 
         browser = bootstrap.handle()
-
+        event_writer = EventWriter(event_root)
+        
         whatsapp_runtime =  WhatsAppRuntime(
             selectors=selectors,
             settings=settings,
-            browser=browser
+            browser=browser,
+            event_writer=event_writer
         )
         
         # 👇 A PARTIR DAQUI entra o serviço

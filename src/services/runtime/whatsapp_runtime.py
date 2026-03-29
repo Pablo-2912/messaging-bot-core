@@ -7,16 +7,21 @@ from src.handlers.chat_processing_handler import process_unread_chats
 from src.domain.entities.contact import Contact
 from src.handlers.chat_processing_handler import build_responses
 from src.handlers.message_delivery_handler import deliver_message_to_chats
+
+from src.infra.events.event_writer import EventWriter
+
 class WhatsAppRuntime:
     def __init__(
         self,
         browser: BrowserManager,
         settings: Settings,
         selectors: WhatsAppSelectors,
+        event_writer:  EventWriter
     ):
         self.browser = browser
         self.settings = settings
         self.selectors = selectors
+        self.event_writer =  event_writer
 
         self.running = False
         self.page = browser.page
@@ -36,13 +41,13 @@ class WhatsAppRuntime:
         while True:
             try:
                 #TODO : Tirar depois
-                #return ["Pai"]
+                return ["Teste_01"]
                 
-                return get_unread_chats(
-                    page=self.browser.page,
-                    selectors=self.selectors,
-                    timeout=300,
-                )
+                # return get_unread_chats(
+                #     page=self.browser.page,
+                #     selectors=self.selectors,
+                #     timeout=300,
+                # )
 
             except TimeoutError as e:
                 retries += 1
@@ -65,7 +70,7 @@ class WhatsAppRuntime:
         # Cria o command 
         responses = build_responses(contacts=contacts)
         
-        deliver_message_to_chats(self.page, responses, selectors=self.selectors)
+        deliver_message_to_chats(self.page, responses, selectors=self.selectors, event_writer=self.event_writer)
 
     def _run_loop(self) -> None: 
            while self.running:
