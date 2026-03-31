@@ -1,37 +1,27 @@
-import json
-import uuid
-from datetime import datetime, timezone
-from pathlib import Path
-import threading
-from domain.enuns.events.bot_whatsapp_events import WhatsappEvents
+from enum import Enum
 
-class EventWriter:
 
-    def __init__(self, base_path: str = "events"):
-        self.base_path = Path(base_path)
-        self.lock = threading.Lock()
+class WorkerLifecycleStatus(str, Enum):
+    """
+    Representa o estado do ciclo de vida de um worker.
+    """
 
-    def publish(self, event_type: WhatsappEvents, payload: dict, source: str):
+    # O processo do worker NÃO está em execução no sistema operacional.
+    STOPPED = "stopped"
 
-        event = {
-            "id": f"evt_{uuid.uuid4().hex[:8]}",
-            "type": event_type,
-            "source": source,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "payload": payload
-        }
+    # O processo foi iniciado e o worker está em fase de bootstrap.
+    # O processo JÁ existe no SO.
+    STARTING = "starting"
 
-        date = datetime.now().strftime("%Y-%m-%d")
+    # O processo está em execução no SO e o worker está ativo.
+    RUNNING = "running"
 
-        event_dir = self.base_path / event_type
-        event_dir.mkdir(parents=True, exist_ok=True)
+    # O processo está em execução no SO e o worker está entrando em pausa.
+    PAUSING = "pausing"
 
-        file_path = event_dir / f"{date}.jsonl"
+    # O processo está em execução no SO, mas o worker está pausado.
+    PAUSED = "paused"
 
-        line = json.dumps(event, ensure_ascii=False)
-
-        with self.lock:
-            with open(file_path, "a", encoding="utf-8") as f:
-                f.write(line + "\n")
-
-        return event
+    # O worker solicitou encerramento e está em fase de shutdown.
+    # O processo AINDA existe no SO.
+    STOPPING = "stopping"

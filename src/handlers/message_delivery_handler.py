@@ -76,6 +76,8 @@ def _try_send_messages_to_chat(page : Page, command : SendMessageCommand, select
         # Escreve a mensagem
         type_text(page=page,text=message_part)
         
+        #TODO : Logica que verifica se há eventos de pause ou stop
+        
         #TODO: Logica que verifica novamente se o usuario já não respondeu o cliente 
         
         # Click no botão de enviar

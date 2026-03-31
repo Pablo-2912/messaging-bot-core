@@ -1,12 +1,16 @@
 from src.domain.enuns.events.bot_whatsapp_events import WhatsappEvents
 from src.infra.events.event_writer import EventWriter
+from src.infra.events.event_listener import EventListener
 
 from src.services.contact.messaging.send_message_command import SendMessageCommand
+from src.domain.enuns.events.bot_lifecycle_events import BotLifecycleEvent
+from src.domain.entities.bot_event import BotEvent
 
 class EventService:
 
-    def __init__(self, writer: EventWriter):
+    def __init__(self, writer: EventWriter, listener: EventListener):
         self.writer = writer
+        self.listener =  listener
 
     def chat_opened(self, number: str, name: str = ""):
         self._publish_contact_event(
@@ -38,7 +42,7 @@ class EventService:
         self._publish_contact_event(
             event_type=WhatsappEvents.CHAT_CLOSED,
             number=number,
-            name=name
+            name=name 
         )
 
     def _publish_contact_event(self, event_type: WhatsappEvents, number: str, name: str):
@@ -54,3 +58,6 @@ class EventService:
             payload=payload,
             source=event_type.value 
         )
+        
+    def get_pause_events(self, event_type: BotLifecycleEvent) -> BotEvent | None:   
+        return self.listener.get_last_event(event_type=event_type)
