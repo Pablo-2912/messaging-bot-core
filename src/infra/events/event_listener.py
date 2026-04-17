@@ -1,16 +1,17 @@
 import json
 from pathlib import Path
 import threading
+from src.domain.enuns.events.bot_lifecycle_status import WorkerLifecycleStatus
 from src.domain.enuns.events.bot_lifecycle_events import BotLifecycleEvent
 from src.domain.entities.bot_event import BotEvent
 
 class EventListener:
 
     def __init__(self, base_path: str = "events"):
-        self.base_path = Path(base_path)
+        
         self.lock = threading.Lock()
 
-    def get_last_event(self, event_type: BotLifecycleEvent):
+    def get_last_lifecycle_event(self, event_type: BotLifecycleEvent):
         event_path = self._resolve_event_path(event_type)
 
         if not event_path.exists() or not event_path.is_dir():

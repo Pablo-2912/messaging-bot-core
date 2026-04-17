@@ -11,13 +11,17 @@ from src.domain.errors.browser_errors import BrowserUnstableError
 from src.domain.errors.playwright_errors import PlaywrightBaseError
 
 from src.infra.events.event_writer import EventWriter
+from src.infra.events.event_listener import EventListener 
+from src.services.runtime.runtime_status import RuntimeSatus
 
 def main():
     try:
+        # Pega configs
         config_root = get_config_root()
         event_root = get_event_root()
         settings = load_settings(config_root / "appsettings.json")
 
+        # Inicializa serviços
         selectors = load_whatsapp_selectors(
             config_root / "whatsapp" / "whatsapp_selectors.json"
         )
@@ -34,19 +38,20 @@ def main():
 
         browser = bootstrap.handle()
         event_writer = EventWriter(event_root)
+        event_listener = EventListener(event_root)
+        
+        runtime_status =  runtime_status ()
         
         whatsapp_runtime =  WhatsAppRuntime(
             selectors=selectors,
             settings=settings,
             browser=browser,
-            event_writer=event_writer
-        )
+            event_writer=event_writer,
+            event_listener=event_listener
+        ) 
         
-        # 👇 A PARTIR DAQUI entra o serviço
-        # run_whatsapp_service(browser, settings, selectors)
-        
+        # Inicia o bot
         whatsapp_runtime.start()
-
 
     except WhatsAppAuthTimeoutError:
         print("Login não realizado dentro do tempo limite. Serviço encerrado.")

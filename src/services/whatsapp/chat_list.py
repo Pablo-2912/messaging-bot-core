@@ -113,7 +113,6 @@ def get_unread_chats(
                     has_unread = True
                     break
 
-            # 👇 ISSO TEM QUE SER FORA DO LOOP DE SELECTOR
             if has_unread and contact_name and contact_name not in unread_chats:
                 unread_chats.append(contact_name)
 
@@ -128,6 +127,8 @@ def get_unread_chats(
                 amount=scroll_amount_fine,
             )
             fine_scrolled_px += scroll_amount_fine
+            
+        #TODO : Adicionar metodo de verificar stop e pause
 
     # ==========================
     # VOLTA AO TOPO FINAL

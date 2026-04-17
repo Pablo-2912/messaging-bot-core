@@ -42,12 +42,14 @@ class WhatsAppRuntime:
             try:
                 #TODO : Tirar depois
                 return ["Teste_01"]
+            
+                #TODO : Adicionar verificação de pause
                 
-                # return get_unread_chats(
-                #     page=self.browser.page,
-                #     selectors=self.selectors,
-                #     timeout=300,
-                # )
+                return get_unread_chats(
+                    page=self.browser.page,
+                    selectors=self.selectors,
+                    timeout=300,
+                )
 
             except TimeoutError as e:
                 retries += 1
@@ -74,9 +76,7 @@ class WhatsAppRuntime:
 
     def _run_loop(self) -> None: 
            while self.running:
-            
-            unread_contacts : list[Contact] = []
-            
+               
             # Pega as mensagens não lidas
             unread_chats = self._get_unread_chats()
             

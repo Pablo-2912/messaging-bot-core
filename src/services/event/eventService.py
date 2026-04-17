@@ -59,5 +59,6 @@ class EventService:
             source=event_type.value 
         )
         
-    def get_pause_events(self, event_type: BotLifecycleEvent) -> BotEvent | None:   
+    def get_last_lifecycle_event(self, event_type: BotLifecycleEvent) -> BotEvent | None:   
         return self.listener.get_last_event(event_type=event_type)
+    
